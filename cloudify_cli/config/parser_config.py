@@ -381,8 +381,10 @@ def parser_config():
                             '-i,--inputs': {
                                 'metavar': 'INPUTS',
                                 'dest': 'inputs',
+                                'action': 'append',
                                 'required': False,
-                                'help': 'Inputs file/string for the deployment creation ({0})'
+                                'help': 'Inputs file/string for the deployment creation ({0}) '
+                                        'This argument can be used multiple times.'
                                         .format(FORMAT_INPUT_AS_YAML_OR_DICT)
                             }
                         },
@@ -650,8 +652,10 @@ def parser_config():
                             '-i,--inputs': {
                                 'metavar': 'INPUTS',
                                 'dest': 'inputs',
+                                'action': 'append',
                                 'required': False,
-                                'help': 'Inputs file/string for the local workflow creation ({0})'
+                                'help': 'Inputs files/strings for the local workflow creation ({0}). '
+                                        'This argument can be used multiple times.'
                                         .format(FORMAT_INPUT_AS_YAML_OR_DICT)
                             },
                             '--install-plugins': {
@@ -828,8 +832,10 @@ def parser_config():
                     '-i,--inputs': {
                         'metavar': 'INPUTS',
                         'dest': 'inputs',
+                        'action': 'append',
                         'required': False,
-                        'help': 'Inputs file/string for a manager blueprint ({0})'
+                        'help': 'Inputs file/string for a manager blueprint ({0}) '
+                                'This argument can be used multiple times.'
                                 .format(FORMAT_INPUT_AS_YAML_OR_DICT)
                     },
                     '--keep-up-on-failure': {

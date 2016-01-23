@@ -64,9 +64,19 @@ class LocalTest(CliCommandTest):
         self.assertIn('"input1": "default_input1"', output)
 
     def test_local_init_with_inputs(self):
-        self._local_init(inputs={'input1': 'new_input1'})
-        output = cli_runner.run_cli('cfy local outputs')
-        self.assertIn('"input1": "new_input1"', output)
+        fd, inputs_file = tempfile.mkstemp()
+        os.close(fd)
+        with open(inputs_file, 'w') as f:
+            f.write('input3: new_input3')
+        try:
+            self._local_init(
+                inputs=['input1=new_input1;input2=new_input2', inputs_file])
+            output = cli_runner.run_cli('cfy local outputs')
+            self.assertIn('"input1": "new_input1"', output)
+            self.assertIn('"input2": "new_input2"', output)
+            self.assertIn('"input3": "new_input3"', output)
+        finally:
+            os.remove(inputs_file)
 
     def test_local_execute(self):
         self._local_init()
@@ -304,12 +314,9 @@ class LocalTest(CliCommandTest):
         flags = '--install-plugins' if install_plugins else ''
         command = 'cfy local init {0} -p {1}'.format(flags,
                                                      blueprint_path)
-        if inputs:
-            inputs_path = os.path.join(TEST_WORK_DIR,
-                                       'temp_inputs.json')
-            with open(inputs_path, 'w') as f:
-                f.write(json.dumps(inputs))
-            command = '{0} -i {1}'.format(command, inputs_path)
+        inputs = inputs or []
+        for inputs_instance in inputs:
+            command += ' -i {0}'.format(inputs_instance)
         cli_runner.run_cli(command)
 
     def _local_execute(self, parameters=None,
