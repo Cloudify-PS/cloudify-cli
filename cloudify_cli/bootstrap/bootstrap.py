@@ -40,11 +40,13 @@ from cloudify_cli.bootstrap.tasks import (
     PROVIDER_RUNTIME_PROPERTY,
     MANAGER_IP_RUNTIME_PROPERTY,
     MANAGER_USER_RUNTIME_PROPERTY,
-    MANAGER_KEY_PATH_RUNTIME_PROPERTY,
-    REST_PORT)
+    MANAGER_KEY_PATH_RUNTIME_PROPERTY)
 from cloudify_cli.exceptions import CloudifyBootstrapError
 from cloudify_rest_client.exceptions import CloudifyClientError
 from cloudify.exceptions import RecoverableError
+
+EXTERNAL_REST_PROTOCOL = 'external_rest_protocol'
+REST_PORT = 'rest_port'
 
 
 def _workdir():
@@ -141,11 +143,6 @@ def bootstrap(blueprint_path,
               task_thread_pool_size=1,
               install_plugins=False):
 
-    def get_protocol(rest_port):
-        return constants.SECURED_PROTOCOL \
-            if str(rest_port) == str(constants.SECURED_REST_PORT) \
-            else constants.DEFAULT_PROTOCOL
-
     storage = local.FileStorage(storage_dir=_workdir())
     try:
         env = common.initialize_blueprint(
@@ -186,6 +183,9 @@ def bootstrap(blueprint_path,
                  nodes_by_id[node_instance.node_id].type_hierarchy)
         manager_node = nodes_by_id['manager_configuration']
 
+    rest_port = manager_node_instance.runtime_properties[REST_PORT]
+    rest_protocol = manager_node_instance.runtime_properties[EXTERNAL_REST_PROTOCOL]
+
     if manager_node_instance.runtime_properties.get('provider'):
         provider_context = \
             manager_node_instance.runtime_properties[
@@ -198,14 +198,10 @@ def bootstrap(blueprint_path,
                 MANAGER_USER_RUNTIME_PROPERTY]
         manager_key_path = manager_node_instance.runtime_properties[
             MANAGER_KEY_PATH_RUNTIME_PROPERTY]
-        rest_port = \
-            manager_node_instance.runtime_properties[REST_PORT]
     else:
         manager_ip = env.outputs()['manager_ip']
         manager_user = manager_node.properties['ssh_user']
         manager_key_path = manager_node.properties['ssh_key_filename']
-        rest_port = manager_node_instance.runtime_properties[REST_PORT]
-
         fabric_env = {
             "host_string": manager_ip,
             "user": manager_user,
@@ -214,7 +210,6 @@ def bootstrap(blueprint_path,
 
         agent_remote_key_path = _handle_agent_key_file(fabric_env,
                                                        manager_node)
-
         provider_context = _handle_provider_context(
             agent_remote_key_path=agent_remote_key_path,
             fabric_env=fabric_env,
@@ -222,10 +217,8 @@ def bootstrap(blueprint_path,
             manager_node_instance=manager_node_instance)
 
         _upload_resources(manager_node, fabric_env, manager_ip, rest_port,
-                          get_protocol(rest_port), task_retries,
+                          rest_protocol, task_retries,
                           task_retry_interval)
-
-    protocol = get_protocol(rest_port)
 
     return {
         'provider_name': 'provider',
@@ -234,7 +227,7 @@ def bootstrap(blueprint_path,
         'manager_user': manager_user,
         'manager_key_path': manager_key_path,
         'rest_port': rest_port,
-        'protocol': protocol
+        'protocol': rest_protocol
     }
 
 
@@ -382,9 +375,12 @@ def _upload_provider_context(remote_agents_private_key_path, fabric_env,
     json.dump(full_provider_context, provider_context_json_file)
 
     request_params = '?update={0}'.format(update_context)
+    # using -k in the command below to Not verify the server's SSL certificate
     upload_provider_context_cmd = \
-        'curl --fail -XPOST localhost:8101/api/{0}/provider/context{1} -H ' \
-        '"Content-Type: application/json" -d @{2}'.format(
+        'curl --fail -k -XPOST ' \
+        '{0}://localhost:8101/api/{1}/provider/context{2} -H ' \
+        '"Content-Type: application/json" -d @{3}'.format(
+            _get_manager_protocol(manager_node),
             constants.API_VERSION, request_params,
             remote_provider_context_file)
 
@@ -394,6 +390,17 @@ def _upload_provider_context(remote_agents_private_key_path, fabric_env,
         # might need always_use_pty=True
         # uploading the provider context to the REST service
         fabric.run(upload_provider_context_cmd)
+
+
+def _get_manager_protocol(manager_node):
+    protocol = constants.DEFAULT_PROTOCOL
+    security_config = manager_node.properties['security']
+    if security_config.get('enabled', False):
+        ssl_config = security_config.get('ssl', {})
+        if ssl_config.get('enabled', False):
+            if ssl_config.get('secure_internal_communication', False):
+                protocol = constants.SECURED_PROTOCOL
+    return protocol
 
 
 def _dump_manager_deployment(manager_node_instance):
