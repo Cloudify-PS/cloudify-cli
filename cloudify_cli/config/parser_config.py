@@ -245,7 +245,7 @@ def parser_config():
                     '-n,--blueprint-filename': {
                         'dest': 'blueprint_filename',
                         'help': "The name of the archive's main "
-                                "blueprint file. Defaults to `{0}`"
+                                "blueprint file. Default: `{0}`"
                                 .format(DEFAULT_BLUEPRINT_FILE_NAME)
                     },
                     '-d,--deployment-id': deployment_id_argument(
