@@ -20,8 +20,6 @@ import argparse
 from cloudify_cli import commands as cfy
 from cloudify_cli.config import completion_utils
 from cloudify_cli.config.argument_utils import remove_completer
-from cloudify_cli.config.argument_utils import remove_metavar
-from cloudify_cli.config.argument_utils import remove_type
 from cloudify_cli.config.argument_utils import make_required
 from cloudify_cli.config.argument_utils import make_optional
 from cloudify_cli.config.argument_utils import set_default
@@ -30,24 +28,6 @@ from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
 from cloudify_cli.constants import INPUTS_PATH_FOR_INSTALL_COMMAND
 
 FORMAT_INPUT_AS_YAML_OR_DICT = 'formatted as YAML or as "key1=value1;key2=value2"'
-
-
-# def manager_blueprint_path_argument(hlp):
-#     return {
-#         'metavar': 'BLUEPRINT_FILE',
-#         'dest': 'blueprint_path',
-#         'type': argparse.FileType(),
-#         'required': True,
-#         'help': hlp,
-#         'completer': completion_utils.yaml_files_completer
-#     }
-#
-#
-# def local_blueprint_path_argument(hlp):
-#     return remove_completer(remove_metavar(remove_type(
-#             manager_blueprint_path_argument(hlp))
-#         )
-#     )
 
 
 def manager_blueprint_path_argument():
