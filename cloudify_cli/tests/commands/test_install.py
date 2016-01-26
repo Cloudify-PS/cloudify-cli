@@ -69,15 +69,16 @@ class InstallTest(CliCommandTest):
                           path_and_filename_and_archive_cmd
                           )
 
-    @patch('cloudify_cli.commands.blueprints.publish_archive')
-    @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
+    @patch('cloudify_cli.commands.executions.start')
+    @patch('cloudify_cli.commands.blueprints.publish_archive')
     @patch('cloudify_cli.commands.blueprints.upload')
-    def test_install_uses_correct_upload_mode(self,
-                                              blueprints_upload_mock,
-                                              deployments_create_mock,
-                                              executions_start_mock,
-                                              blueprints_publish_archive_mock):
+    def test_use_blueprints_upload_mode(
+            self,
+            blueprints_upload_mock,
+            blueprints_publish_archive_mock,
+            deployments_create_mock,
+            executions_start_mock):
 
         upload_mode_install_cmd = 'cfy install -p {0}'\
             .format(sample_blueprint_path)
@@ -89,24 +90,26 @@ class InstallTest(CliCommandTest):
         self.assertTrue(executions_start_mock.called)
         self.assertFalse(blueprints_publish_archive_mock.called)
 
-    # @patch('cloudify_cli.commands.blueprints.upload')
-    # @patch('cloudify_cli.commands.executions.start')
-    # @patch('cloudify_cli.commands.deployments.create')
-    # @patch('cloudify_cli.commands.blueprints.publish_archive')
-    # def test_install_uses_publish_archive_mode(self,
-    #                                            blueprints_upload_mock,
-    #                                            deployments_create_mock,
-    #                                            executions_start_mock,
-    #                                            blueprints_publish_archive_mock):
-    #     stub_path = 'path'
-    #     upload_command = 'cfy install -p {0}'.format(stub_path)
-    #
-    #     cli_runner.run_cli(upload_command)
-    #
-    #     self.assertTrue(blueprints_upload_mock.called)
-    #     self.assertTrue(deployments_create_mock)
-    #     self.assertTrue(executions_start_mock)
-    #     self.assertFalse(blueprints_publish_archive_mock)
+    @patch('cloudify_cli.commands.deployments.create')
+    @patch('cloudify_cli.commands.executions.start')
+    @patch('cloudify_cli.commands.blueprints.publish_archive')
+    @patch('cloudify_cli.commands.blueprints.upload')
+    def test_use_blueprints_publish_archive_mode(
+            self,
+            blueprints_upload_mock,
+            blueprints_publish_archive_mock,
+            deployments_create_mock,
+            executions_start_mock):
 
+        publish_archive_command = \
+            'cfy install -n {0} --archive-location={1}'.format(stub_filename,
+                                                               stub_archive)
+
+        cli_runner.run_cli(publish_archive_command)
+
+        self.assertTrue(blueprints_publish_archive_mock)
+        self.assertTrue(deployments_create_mock)
+        self.assertTrue(executions_start_mock)
+        self.assertFalse(blueprints_upload_mock.called)
 
 
