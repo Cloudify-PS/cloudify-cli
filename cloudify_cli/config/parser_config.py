@@ -19,6 +19,7 @@ import argparse
 
 from cloudify_cli import commands as cfy
 from cloudify_cli.config import completion_utils
+from cloudify_cli.config.argument_utils import remove_type
 from cloudify_cli.config.argument_utils import remove_completer
 from cloudify_cli.config.argument_utils import make_required
 from cloudify_cli.config.argument_utils import make_optional
@@ -235,8 +236,8 @@ def parser_config():
                     # TODO make {blueprint-path, blueprint-id} and
                     # TODO {archive-location, blueprint-filename}
                     # TODO mutually exclusive groups?
-                    '-p,--blueprint-path': make_optional(
-                            manager_blueprint_path_argument()
+                    '-p,--blueprint-path': make_optional(remove_type(
+                            manager_blueprint_path_argument())
                     ),
                     '-b,--blueprint-id': remove_completer(
                             make_optional(blueprint_id_argument(
