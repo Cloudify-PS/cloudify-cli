@@ -43,38 +43,12 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
     if blueprint_filename is None:
         blueprint_filename = DEFAULT_BLUEPRINT_FILE_NAME
 
-    # Run either `cfy blueprints upload` or `cfy blueprints publish-archive`
-    blueprints_action(blueprint_path, archive_location,
-                      blueprint_filename, blueprint_id)
-
-    # If deployment-id wasn't supplied, use the same name as the blueprint id.
-    if deployment_id is None:
-        deployment_id = blueprint_id
-
-    deployments.create(blueprint_id, deployment_id, inputs)
-
-    # although the `install` command does not need the `force` argument,
-    # we *are* using the `executions start` handler as a part of it.
-    # as a result, we need to provide it with a `force` argument, which is
-    # defined below.
-    force = False
-
-    executions.start(workflow_id, deployment_id, timeout, force,
-                     allow_custom_parameters, include_logs, parameters)
 
 
-def blueprints_action(blueprint_path,
-                      archive_location,
-                      blueprint_filename,
-                      blueprint_id):
-    """
-    Run either `cfy blueprints upload` or `cfy blueprints publish-archive`,
-    depending on the argument `cfy install` was given.
-    """
 
     # The presence of the `archive_location` argument is used to distinguish
-    # between `install` in 'upload blueprint' mode,
-    # and `install` in 'publish archive' mode.
+    # between `install` in 'blueprints upload' mode,
+    # and `install` in 'blueprints publish archive' mode.
     if archive_location:
         # If blueprint-id wasn't supplied, assign it to the name of the archive
         if blueprint_id is None:
@@ -104,6 +78,21 @@ def blueprints_action(blueprint_path,
             raise CloudifyCliError("Can't open the the file that "
                                    "`blueprint_path` leads to)"
                                    )
+
+    # If deployment-id wasn't supplied, use the same name as the blueprint id.
+    if deployment_id is None:
+        deployment_id = blueprint_id
+
+    deployments.create(blueprint_id, deployment_id, inputs)
+
+    # although the `install` command does not need the `force` argument,
+    # we *are* using the `executions start` handler as a part of it.
+    # as a result, we need to provide it with a `force` argument, which is
+    # defined below.
+    force = False
+
+    executions.start(workflow_id, deployment_id, timeout, force,
+                     allow_custom_parameters, include_logs, parameters)
 
 
 def check_for_mutually_exclusive_arguments(blueprint_path,
