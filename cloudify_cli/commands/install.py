@@ -39,7 +39,7 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
 
     # Assuming no collisions, assign some default values for missing arguments:
     if blueprint_path is None:
-        blueprint_id = DEFAULT_BLUEPRINT_PATH
+        blueprint_path = DEFAULT_BLUEPRINT_PATH
     if blueprint_filename is None:
         blueprint_filename = DEFAULT_BLUEPRINT_FILE_NAME
 
@@ -93,9 +93,17 @@ def blueprints_action(blueprint_path,
             blueprint_id = os.path.basename(
                     os.path.dirname(
                             os.path.abspath(
-                                    blueprint_path.name)))
-
-        blueprints.upload(blueprint_path, blueprint_id)
+                                    blueprint_path)))
+        # Try opening `blueprint_path`, since `blueprints.upload` expects the
+        # `blueprint_path` argument to be a file.
+        # (The reason for this is beyond me. That's just the way it is)
+        try:
+            with open(blueprint_path) as blueprint_file:
+                blueprints.upload(blueprint_file, blueprint_id)
+        except IOError:
+            raise CloudifyCliError("Can't open the the file that "
+                                   "`blueprint_path` leads to)"
+                                   )
 
 
 def check_for_mutually_exclusive_arguments(blueprint_path,
