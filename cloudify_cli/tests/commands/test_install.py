@@ -35,6 +35,8 @@ sample_blueprint_path = os.path.join(BLUEPRINTS_DIR,
 stub_filename = 'my_blueprint.yaml'
 stub_archive = 'archive.zip'
 stub_blueprint_id = 'blueprint_id'
+stub_inputs = 'inputs.yaml'
+stub_deployment_id = 'deployment_id'
 
 
 class InstallTest(CliCommandTest):
@@ -135,24 +137,25 @@ class InstallTest(CliCommandTest):
                       ]
         )
 
-    # TODO figure out how to handle the fact that `DEFAULT_BLUEPRINT_PATH`
-    # TODO does not exists, and therefore `install.blueprints_action` raises an
-    # TODO exception before it call call `blueprints.upload
-    @patch('cloudify_cli.commands.executions.start')
-    @patch('cloudify_cli.commands.deployments.create')
-    @patch('cloudify_cli.commands.blueprints.publish_archive')
-    def test_blueprint_path_default_value(self, *args):
-        upload_command = \
-            'cfy install --blueprint-id={0}'.format(stub_blueprint_id)
-
-        self.assert_method_called(
-                cli_command=upload_command,
-                module=commands.blueprints,
-                function_name='upload',
-                args=[DEFAULT_BLUEPRINT_PATH,
-                      stub_blueprint_id
-                      ]
-        )
+    # # TODO figure out how to handle the fact that `DEFAULT_BLUEPRINT_PATH`
+    # # TODO does not exists, and therefore `install.blueprints_action` raises an
+    # # TODO exception before it calls `blueprints.upload
+    # # TODO maybe create a tmp file in the cwd named 'blueprint.yaml'?
+    # @patch('cloudify_cli.commands.executions.start')
+    # @patch('cloudify_cli.commands.deployments.create')
+    # @patch('cloudify_cli.commands.blueprints.publish_archive')
+    # def test_blueprint_path_default_value(self, *args):
+    #     upload_command = \
+    #         'cfy install --blueprint-id={0}'.format(stub_blueprint_id)
+    #
+    #     self.assert_method_called(
+    #             cli_command=upload_command,
+    #             module=commands.blueprints,
+    #             function_name='upload',
+    #             args=[DEFAULT_BLUEPRINT_PATH,
+    #                   stub_blueprint_id
+    #                   ]
+    #     )
 
     @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
@@ -175,28 +178,79 @@ class InstallTest(CliCommandTest):
         )
 
 
-    # TODO address the fact that `blueprints upload` expects an open file
+    # # TODO address the fact that `blueprints upload` expects an open file
+    # # TODO maybe create a tmp file in the cwd named 'blueprint.yaml'?
+    # @patch('cloudify_cli.commands.executions.start')
+    # @patch('cloudify_cli.commands.deployments.create')
+    # @patch('cloudify_cli.commands.blueprints.upload')
+    # def test_blueprint_id_default_upload_mode(self, *args):
+    #
+    #     upload_command = 'cfy install -p {0}'.format(sample_blueprint_path)
+    #
+    #     directory_name = 'helloworld'
+    #
+    #     self.assert_method_called(
+    #             cli_command=upload_command,
+    #             module=commands.blueprints,
+    #             function_name='upload',
+    #             args=[sample_blueprint_path,
+    #                   directory_name
+    #                   ]
+    #     )
+
+    @patch('cloudify_cli.commands.blueprints.publish_archive')
     @patch('cloudify_cli.commands.executions.start')
-    @patch('cloudify_cli.commands.deployments.create')
-    @patch('cloudify_cli.commands.blueprints.upload')
-    def test_blueprint_id_default_upload_mode(self, *args):
+    def test_default_deployment_id(self, *args):
 
-        upload_command = 'cfy install -p {0}'.format(sample_blueprint_path)
-
-        directory_name = 'helloworld'
+        publish_archive_command = \
+            'cfy install -n {0} --archive-location={1} --inputs={2} -b {3}'\
+                .format(stub_filename, stub_archive,
+                        stub_inputs, stub_blueprint_id)
 
         self.assert_method_called(
-                cli_command=upload_command,
-                module=commands.blueprints,
-                function_name='upload',
-                args=[sample_blueprint_path,
-                      directory_name
+                cli_command=publish_archive_command,
+                module=commands.deployments,
+                function_name='create',
+                args=[stub_blueprint_id,
+                      stub_blueprint_id,
+                      stub_inputs,
                       ]
         )
 
+    @patch('cloudify_cli.commands.blueprints.publish_archive')
+    @patch('cloudify_cli.commands.executions.start')
+    def test_custom_deployment_id(self, *args):
+
+        publish_archive_command = \
+            'cfy install -n {0} --archive-location={1} ' \
+            '--inputs={2} -b {3} -d {4}' \
+                .format(stub_filename, stub_archive,
+                        stub_inputs, stub_blueprint_id,
+                        stub_deployment_id)
+
+        self.assert_method_called(
+                cli_command=publish_archive_command,
+                module=commands.deployments,
+                function_name='create',
+                args=[stub_blueprint_id,
+                      stub_deployment_id,
+                      stub_inputs
+                      ]
+        )
+
+    # both the above tests also in 'blueprints upload mode'?
 
 
-        # test default deployment id with defualt blueprint id (maybe seperate
+
+
+
+
+
+
+
+
+
+        # test default deployment id with default blueprint id (maybe seperate
         # to upload and publish modes
 
         # test default workflow name (seperate modes too?)
