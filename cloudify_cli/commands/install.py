@@ -37,19 +37,14 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
                                            archive_location,
                                            blueprint_filename)
 
-    # Assuming no collisions, assign some default values for missing arguments:
-    if blueprint_path is None:
-        blueprint_path = DEFAULT_BLUEPRINT_PATH
-    if blueprint_filename is None:
-        blueprint_filename = DEFAULT_BLUEPRINT_FILE_NAME
-
-
-
-
     # The presence of the `archive_location` argument is used to distinguish
     # between `install` in 'blueprints upload' mode,
     # and `install` in 'blueprints publish archive' mode.
     if archive_location:
+
+        if blueprint_filename is None:
+            blueprint_filename = DEFAULT_BLUEPRINT_FILE_NAME
+
         # If blueprint-id wasn't supplied, assign it to the name of the archive
         if blueprint_id is None:
 
@@ -57,9 +52,15 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
                     os.path.basename(archive_location))
             blueprint_id = filename
 
+            # TODO implement url handling. just use the logic of `blueprints.publish_archive`
+
         blueprints.publish_archive(archive_location, blueprint_filename,
                                    blueprint_id)
     else:
+
+        if blueprint_path is None:
+            blueprint_path = DEFAULT_BLUEPRINT_PATH
+
         # If blueprint-id wasn't supplied, assign it to the name of
         # folder containing the application's blueprint file.
         if blueprint_id is None:
