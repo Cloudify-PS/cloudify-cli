@@ -19,6 +19,7 @@ Handles 'cfy install'
 
 import os
 
+from cloudify_cli import utils
 from cloudify_cli.commands import blueprints
 from cloudify_cli.commands import deployments
 from cloudify_cli.commands import executions
@@ -59,7 +60,8 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
     else:
 
         if blueprint_path is None:
-            blueprint_path = DEFAULT_BLUEPRINT_PATH
+            blueprint_path = os.path.join(utils.get_cwd(),
+                                          DEFAULT_BLUEPRINT_PATH)
 
         # If blueprint-id wasn't supplied, assign it to the name of
         # folder containing the application's blueprint file.
