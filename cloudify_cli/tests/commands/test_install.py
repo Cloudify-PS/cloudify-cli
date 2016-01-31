@@ -30,6 +30,7 @@ from cloudify_cli.exceptions import CloudifyCliError
 from cloudify_cli.tests import cli_runner
 from cloudify_cli.tests.commands.test_cli_command import CliCommandTest
 from cloudify_cli.tests.commands.test_cli_command import BLUEPRINTS_DIR
+from cloudify_cli import utils
 
 
 sample_blueprint_path = os.path.join(BLUEPRINTS_DIR,
@@ -144,26 +145,31 @@ class InstallTest(CliCommandTest):
                       ]
         )
 
-    # TODO figure out how to handle the fact that `DEFAULT_BLUEPRINT_PATH`
-    # TODO does not exists, and therefore `install.blueprints_action` raises
-    # TODO an exception before it calls `blueprints.upload
-    # TODO maybe create a tmp file in the cwd named 'blueprint.yaml'?
     @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
     @patch('cloudify_cli.commands.blueprints.publish_archive')
     @patch('cloudify_cli.commands.blueprints.upload')
     def test_blueprint_path_default_value(self, blueprints_upload_mock, *args):
 
-        upload_command = \
+        install_upload_mode_command = \
             'cfy install --blueprint-id={0}'.format(stub_blueprint_id)
 
-        cli_runner.run_cli(upload_command)
+        tmp_blueprint_path = os.path.join(self.original_utils_get_cwd(),
+                                          DEFAULT_BLUEPRINT_PATH)
 
-        self.assertEqual(blueprints_upload_mock.call_args_list[0][0][0],
-                         sample_blueprint_path
+        # create a tmp file representing a blueprint to upload
+        open(tmp_blueprint_path, 'w+').close()
+
+        cli_runner.run_cli(install_upload_mode_command)
+
+        blueprint_path_argument_from_upload = \
+            blueprints_upload_mock.call_args_list[0][0][0]
+
+        # check that the blueprint path value that was assigned in `install`
+        # is indeed the default blueprint file path
+        self.assertEqual(blueprint_path_argument_from_upload.name,
+                         tmp_blueprint_path
                          )
-
-
 
     @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
