@@ -26,7 +26,8 @@ from cloudify_cli.config.argument_utils import make_optional
 from cloudify_cli.config.argument_utils import set_default
 from cloudify_cli.constants import DEFAULT_REST_PORT
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
-from cloudify_cli.constants import INPUTS_PATH_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_TIMEOUT
 
 FORMAT_INPUT_AS_YAML_OR_DICT = 'formatted as YAML or as "key1=value1;key2=value2"'
 
@@ -96,8 +97,8 @@ def install_command_inputs_argument():
             inputs_argument('Inputs file/string for the deployment '
                             'creation ({0}). Default: {1}'
                             .format(FORMAT_INPUT_AS_YAML_OR_DICT,
-                                    INPUTS_PATH_FOR_INSTALL_COMMAND)),
-            INPUTS_PATH_FOR_INSTALL_COMMAND)
+                                    DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)),
+            DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)
 
 
 def execution_id_argument(hlp):
@@ -151,7 +152,7 @@ def timeout_argument():
     return {
         'dest': 'timeout',
         'type': int,
-        'default': 900,
+        'default': DEFAULT_TIMEOUT,
         'help': 'Operation timeout in seconds (The execution itself will keep '
                 'going. It is the CLI that will stop waiting for it to '
                 'terminate)'
@@ -233,11 +234,10 @@ def parser_config():
             'install': {
                 'help': '',  # TODO add help text
                 'arguments': {
-                    # TODO make {blueprint-path, blueprint-id} and
-                    # TODO {archive-location, blueprint-filename}
-                    # TODO mutually exclusive groups?
-                    '-p,--blueprint-path': make_optional(remove_type(
-                            manager_blueprint_path_argument())
+                    '-p,--blueprint-path':
+                        make_optional(
+                                remove_type(
+                                        manager_blueprint_path_argument())
                     ),
                     '-b,--blueprint-id': remove_completer(
                             make_optional(blueprint_id_argument(
@@ -765,7 +765,7 @@ def parser_config():
                                             local_blueprint_path_argument(
                                                 hlp="Path to the application's"
                                                     "blueprint file"
-                                            ), DEFAULT_BLUEPRINT_FILE_NAME
+                                            ), DEFAULT_BLUEPRINT_FILE_NAME # TODO inconsisted with the default value in `cfy install`, which is determined inside the relative handler
                                         )
                                 ),
                             '-i,--inputs': install_command_inputs_argument(),
