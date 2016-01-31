@@ -488,9 +488,14 @@ class CloudifyWorkingDirectorySettings(yaml.YAMLObject):
         self._protocol = protocol
 
 
-def remove_if_exists(dirpath):
+def remove_if_exists(path):
+
     try:
-        shutil.rmtree(dirpath)
+        if os.path.isfile(path):
+            os.remove(path)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+            
     except OSError as e:
         if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
             raise  # re-raise exception if a different error occurred
