@@ -14,6 +14,7 @@
 # limitations under the License.
 ############
 
+# flake8: noqa
 
 FILE_NOT_FOUND = "Could not find file: {0}"
 
@@ -53,3 +54,5 @@ SSH_WIN_NOT_FOUND = """ssh.exe not found. Are you sure you have it installed?
 As alternative you can use PuTTY to ssh into the management server. \
 Do not forget to convert your private key from OpenSSH format to \
 PuTTY's format using PuTTYGen."""
+
+PURGE_FLAG_REQUIRES_FORCE = '''To purge Manager logs, the `force` flag must be True.'''

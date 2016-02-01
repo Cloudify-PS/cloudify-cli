@@ -104,6 +104,55 @@ def parser_config():
             }
         },
         'commands': {
+            'logs': {
+                'help': 'Handles Cloudify Manager logs'
+                'sub_commands': {
+                    'get': {
+                        'arguments': {
+                            '-d,--destination-path': {
+                                'help': 'Destination path of the downloaded archive',
+                                'default': os.getcwd(),
+                            }
+                            '-f,--format': {
+                                'help': 'The format of the downloaded archive',
+                                'choices': ['zip', 'tar.gz'],
+                                'default': 'tar.gz'
+                            },
+                        },
+                        'help': "Retrieves an archive containing a Manager\'s logs",
+                        'handler': cfy.logs.get
+                    },
+                    'purge': {
+                        'arguments': {
+                            '-f,--force': {
+                                'help': 'Force purge. This flag is mandatory',
+                                'required': True,
+                                'action': 'store_true',
+                                'default': False
+                            }.
+                            '--backup-first': {
+                                'help': 'Whether to backup before merging',
+                                'required': False,
+                                'action': 'store_true',
+                                'default': False
+                            }
+                        },
+                        'help': 'Delete a Manager\'s logs',
+                        'handler': cfy.logs.purge
+                    },
+                    'backup': {
+                        # 'arguments': {
+                        #     '-p,--prefix': {
+                        #         'help': 'Prefix for the backed-up archive',
+                        #         'required': False,
+                        #         'default': 'cloudify-manager-logs'
+                        #     },
+                        # },
+                        'help': 'Backs up a Manager\'s logs',
+                        'handler': cfy.logs.backup
+                    },
+                }
+            },
             'plugins': {
                 'help': "Manages Cloudify's plugins",
                 'sub_commands': {
