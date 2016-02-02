@@ -42,7 +42,7 @@ from cloudify_cli.tests.commands.test_cli_command import \
     (BLUEPRINTS_DIR,
      TEST_WORK_DIR)
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
-from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_INPUTS_FOR_INSTALL_COMMAND
 from cloudify_cli.constants import DEFAULT_PARAMETERS
 from cloudify_cli.constants import DEFAULT_TASK_THREAD_POOL_SIZE
 
@@ -293,19 +293,23 @@ class LocalTest(CliCommandTest):
 
     @patch('cloudify_cli.commands.local.execute')
     @patch('cloudify_cli.commands.local.init')
-    def test_install_command_default_init_arguments(self, local_init_mock, *args):
+    def test_install_command_default_init_arguments(self,
+                                                    local_init_mock,
+                                                    *args):
 
         local_install_command = 'cfy local install'
         cli_runner.run_cli(local_install_command)
 
         local_init_mock.assert_called_with(DEFAULT_BLUEPRINT_PATH,
-                                           DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND,
+                                           DEFAULT_INPUTS_FOR_INSTALL_COMMAND,
                                            False
                                            )
 
     @patch('cloudify_cli.commands.local.execute')
     @patch('cloudify_cli.commands.local.init')
-    def test_install_command_custom_init_arguments(self, local_init_mock, *args):
+    def test_install_command_custom_init_arguments(self,
+                                                   local_init_mock,
+                                                   *args):
 
         local_install_command = \
             'cfy local install -p blueprint_path.yaml -i key=value ' \
@@ -335,7 +339,22 @@ class LocalTest(CliCommandTest):
                                               DEFAULT_TASK_THREAD_POOL_SIZE
                                               )
 
-    # TODO test install command custom execute values
+    # @patch('cloudify_cli.commands.local.init')
+    # @patch('cloudify_cli.commands.local.execute')
+    # def test_install_command_custom_execute_arguments(self,
+    #                                                   local_execute_mock,
+    #                                                   *args):
+    #
+    #     local_install_command = 'cfy local install -w my-install, '
+    #     cli_runner.run_cli(local_install_command)
+    #
+    #     local_execute_mock.assert_called_with('install',
+    #                                           DEFAULT_PARAMETERS,
+    #                                           False,
+    #                                           0,
+    #                                           1,
+    #                                           DEFAULT_TASK_THREAD_POOL_SIZE
+    #                                           )
 
     @nose.tools.nottest
     def test_local_outputs(self):

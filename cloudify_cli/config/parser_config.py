@@ -27,7 +27,7 @@ from cloudify_cli.config.argument_utils import set_default
 from cloudify_cli.constants import DEFAULT_REST_PORT
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
-from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_INPUTS_FOR_INSTALL_COMMAND
 from cloudify_cli.constants import DEFAULT_TIMEOUT
 from cloudify_cli.constants import DEFAULT_PARAMETERS
 from cloudify_cli.constants import DEFAULT_TASK_THREAD_POOL_SIZE
@@ -101,8 +101,8 @@ def install_command_inputs_argument():
             inputs_argument('Inputs file/string for the deployment '
                             'creation ({0}). Default: {1}'
                             .format(FORMAT_INPUT_AS_YAML_OR_DICT,
-                                    DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)),
-            DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)
+                                    DEFAULT_INPUTS_FOR_INSTALL_COMMAND)),
+            DEFAULT_INPUTS_FOR_INSTALL_COMMAND)
 
 
 def execution_id_argument(hlp):
