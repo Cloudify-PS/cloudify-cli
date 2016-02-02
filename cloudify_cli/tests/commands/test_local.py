@@ -43,6 +43,8 @@ from cloudify_cli.tests.commands.test_cli_command import \
      TEST_WORK_DIR)
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
 from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_PARAMETERS
+from cloudify_cli.constants import DEFAULT_TASK_THREAD_POOL_SIZE
 
 
 class LocalTest(CliCommandTest):
@@ -316,11 +318,22 @@ class LocalTest(CliCommandTest):
                                            True
                                            )
 
+    @patch('cloudify_cli.commands.local.init')
+    @patch('cloudify_cli.commands.local.execute')
+    def test_install_command_default_execute_arguments(self,
+                                                       local_execute_mock,
+                                                       *args):
 
-    def test_install_commnad_default_execute_arguments(self):
-        pass
+        local_install_command = 'cfy local install'
+        cli_runner.run_cli(local_install_command)
 
-    # TODO test install command default execute values
+        local_execute_mock.assert_called_with('install',
+                                              DEFAULT_PARAMETERS,
+                                              False,
+                                              0,
+                                              1,
+                                              DEFAULT_TASK_THREAD_POOL_SIZE
+                                              )
 
     # TODO test install command custom execute values
 
