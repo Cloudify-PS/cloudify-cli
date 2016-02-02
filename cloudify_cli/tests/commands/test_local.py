@@ -23,6 +23,7 @@ import tempfile
 
 import yaml
 import nose
+from mock import patch
 
 from dsl_parser import exceptions as parser_exceptions
 
@@ -40,6 +41,8 @@ from cloudify_cli.tests.commands.test_cli_command import CliCommandTest
 from cloudify_cli.tests.commands.test_cli_command import \
     (BLUEPRINTS_DIR,
      TEST_WORK_DIR)
+from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
+from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 
 
 class LocalTest(CliCommandTest):
@@ -286,7 +289,19 @@ class LocalTest(CliCommandTest):
             .format(BLUEPRINTS_DIR)
         cli_runner.run_cli('cfy local init -p {0}'.format(blueprint_path))
 
-    # TODO test_install_command_default_init_values
+    @patch('cloudify_cli.commands.local.execute')
+    @patch('cloudify_cli.commands.local.init')
+    def test_install_command_default_init_values(self, local_init_mock, *args):
+
+        local_install_command = 'cfy local install'
+        cli_runner.run_cli(local_install_command)
+
+        local_init_mock.assert_called_with(DEFAULT_BLUEPRINT_PATH,
+                                           DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND,
+                                           False
+                                           )
+
+
 
     # TODO test_install_command_custom_install_values
 
