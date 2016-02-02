@@ -339,22 +339,28 @@ class LocalTest(CliCommandTest):
                                               DEFAULT_TASK_THREAD_POOL_SIZE
                                               )
 
-    # @patch('cloudify_cli.commands.local.init')
-    # @patch('cloudify_cli.commands.local.execute')
-    # def test_install_command_custom_execute_arguments(self,
-    #                                                   local_execute_mock,
-    #                                                   *args):
-    #
-    #     local_install_command = 'cfy local install -w my-install, '
-    #     cli_runner.run_cli(local_install_command)
-    #
-    #     local_execute_mock.assert_called_with('install',
-    #                                           DEFAULT_PARAMETERS,
-    #                                           False,
-    #                                           0,
-    #                                           1,
-    #                                           DEFAULT_TASK_THREAD_POOL_SIZE
-    #                                           )
+    @patch('cloudify_cli.commands.local.init')
+    @patch('cloudify_cli.commands.local.execute')
+    def test_install_command_custom_execute_arguments(self,
+                                                      local_execute_mock,
+                                                      *args):
+
+        local_install_command = 'cfy local install ' \
+                                '-w my-install ' \
+                                '--parameters key=value ' \
+                                '--allow-custom-parameters ' \
+                                '--task-retries 14 ' \
+                                '--task-retry-interval 7 ' \
+                                '--task-thread-pool-size 87'
+        cli_runner.run_cli(local_install_command)
+
+        local_execute_mock.assert_called_with('my-install',
+                                              "key=value",
+                                              True,
+                                              14,
+                                              7,
+                                              87
+                                              )
 
     @nose.tools.nottest
     def test_local_outputs(self):
