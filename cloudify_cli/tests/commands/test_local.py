@@ -301,10 +301,20 @@ class LocalTest(CliCommandTest):
                                            False
                                            )
 
+    @patch('cloudify_cli.commands.local.execute')
+    @patch('cloudify_cli.commands.local.init')
+    def test_install_command_custom_init_values(self, local_init_mock, *args):
 
+        local_install_command = \
+            'cfy local install -p blueprint_path.yaml -i key=value ' \
+            '--install-plugins'
 
-    # TODO test_install_command_custom_install_values
+        cli_runner.run_cli(local_install_command)
 
+        local_init_mock.assert_called_with('blueprint_path.yaml',
+                                           "key=value",
+                                           True
+                                           )
 
     @nose.tools.nottest
     def test_local_outputs(self):
