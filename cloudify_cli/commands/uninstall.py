@@ -48,10 +48,11 @@ def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
 
     blueprints.delete(blueprint_id)
 
-###############################################################################
-# From here, it is just a patch that enables to call `cfy deployments delete`
-# right after `cfy executions start [-w uninstall]`
-###############################################################################
+# The function below (taken, with small modifications,
+# from: `cloudify-system-tests.cosmo_tester.framework.testenv`),
+# enables to call `cfy deployments delete`
+# immediately after calling `cfy executions start [-w uninstall]`
+
 
 TERMINATED = 'terminated'
 FAILED = 'failed'
