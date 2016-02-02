@@ -286,6 +286,11 @@ class LocalTest(CliCommandTest):
             .format(BLUEPRINTS_DIR)
         cli_runner.run_cli('cfy local init -p {0}'.format(blueprint_path))
 
+    # TODO test_install_command_default_init_values
+
+    # TODO test_install_command_custom_install_values
+
+
     @nose.tools.nottest
     def test_local_outputs(self):
         # tested extensively by the other tests
