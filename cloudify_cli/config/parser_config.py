@@ -26,6 +26,7 @@ from cloudify_cli.config.argument_utils import make_optional
 from cloudify_cli.config.argument_utils import set_default
 from cloudify_cli.constants import DEFAULT_REST_PORT
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
+from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
 from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 from cloudify_cli.constants import DEFAULT_TIMEOUT
 
@@ -40,7 +41,8 @@ def manager_blueprint_path_argument():
         'type': argparse.FileType(),
         'completer': completion_utils.yaml_files_completer
     }
-    hlp = "Path to the application's blueprint file"
+    hlp = "Path to the application's blueprint file." \
+          "Default: `{0}`".format(DEFAULT_BLUEPRINT_PATH)
 
     # Update the specific 'manager blueprint path argument' attributes with
     # those that are shared with the 'local blueprint path argument'
@@ -761,11 +763,10 @@ def parser_config():
                         'arguments': {
                             '-p,--blueprint-path':
                                 make_optional(
-                                        set_default(
-                                            local_blueprint_path_argument(
+                                        local_blueprint_path_argument(
                                                 hlp="Path to the application's"
-                                                    "blueprint file"
-                                            ), DEFAULT_BLUEPRINT_FILE_NAME # TODO inconsisted with the default value in `cfy install`, which is determined inside the relative handler
+                                                    "blueprint file. Default: "
+                                                    "`{0}`".format(DEFAULT_BLUEPRINT_PATH)
                                         )
                                 ),
                             '-i,--inputs': install_command_inputs_argument(),

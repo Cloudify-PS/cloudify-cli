@@ -28,6 +28,7 @@ from cloudify_cli import common
 from cloudify_cli import utils
 from cloudify_cli.logger import get_logger
 from cloudify_cli.commands import init as cfy_init
+from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
 
 
 _NAME = 'local'
@@ -38,6 +39,11 @@ def install(blueprint_path, inputs, install_plugins, workflow_id, parameters,
             allow_custom_parameters, task_retries, task_retry_interval,
             task_thread_pool_size
             ):
+
+    # if no blueprint path was supplied, set it to a default value
+    if blueprint_path is None:
+        blueprint_path = DEFAULT_BLUEPRINT_PATH
+
     init(blueprint_path, inputs, install_plugins)
 
     execute(workflow_id, parameters, allow_custom_parameters, task_retries,
