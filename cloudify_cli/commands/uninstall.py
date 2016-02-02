@@ -30,13 +30,6 @@ from cloudify_cli.commands import executions
 def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
               allow_custom_parameters, timeout, include_logs):
 
-    # If `deployment-id` wasn't supplied, we assume that the user intends to
-    # use `cfy uninstall` as the inverse of `cfy install`.
-    # That is, we assume that the deployment-id is the same as the name of
-    # the current directory. [see `cfy install` command code for reference]
-    if deployment_id is None:
-        deployment_id = os.path.basename(os.getcwd())
-
     # Although the `uninstall` command does not use the `force` argument,
     # we are using the `executions start` handler as a part of it.
     # As a result, we need to provide it with a `force` argument, which is
@@ -52,11 +45,6 @@ def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
     ignore_live_nodes = True
 
     deployments.delete(deployment_id, ignore_live_nodes)
-
-    # If `blueprint-id` wasn't supplied, we will assume it the same as the
-    # deployment id.
-    if blueprint_id is None:
-        blueprint_id = deployment_id
 
     blueprints.delete(blueprint_id)
 
