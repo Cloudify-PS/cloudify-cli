@@ -146,7 +146,6 @@ def force_argument(hlp):
     return {
         'dest': 'force',
         'action': 'store_true',
-        'default': False,
         'help': hlp
     }
 
@@ -174,7 +173,6 @@ def install_plugins_argument():
     return {
         'dest': 'install_plugins',
         'action': 'store_true',
-        'default': False,
         'help': 'Install necessary plugins of the given blueprint.'
     }
 
@@ -432,14 +430,12 @@ def parser_config():
                             '--include-metrics': {
                                 'dest': 'include_metrics',
                                 'action': 'store_true',
-                                'default': False,
                                 'help': 'Include metrics data'
                                         'in the snapshot'
                             },
                             '--exclude-credentials': {
                                 'dest': 'exclude_credentials',
                                 'action': 'store_true',
-                                'default': False,
                                 'help': 'Do not store credentials in snapshot'
                             }
                         },
@@ -490,7 +486,6 @@ def parser_config():
                             '--without-deployments-envs': {
                                 'dest': 'without_deployments_envs',
                                 'action': 'store_true',
-                                'default': False,
                                 'help': 'Restore snapshot without deployment environments'
                             },
                             '-f,--force':
@@ -548,7 +543,6 @@ def parser_config():
                             '-f,--ignore-live-nodes': {
                                 'dest': 'ignore_live_nodes',
                                 'action': 'store_true',
-                                'default': False,
                                 'help': 'Delete the deployment even if '
                                         'there are existing live nodes for it'
                             }
@@ -590,7 +584,6 @@ def parser_config():
                             '--tail': {
                                 'dest': 'tail',
                                 'action': 'store_true',
-                                'default': False,
                                 'help': 'Tail the events of the specified execution until it ends'
                             }
                         },
@@ -619,7 +612,6 @@ def parser_config():
                             '--system-workflows': {
                                 'dest': 'include_system_workflows',
                                 'action': 'store_true',
-                                'default': False,
                                 'help': 'Include executions of '
                                         'system workflows'
                             },
