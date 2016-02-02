@@ -29,6 +29,7 @@ from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
 from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 from cloudify_cli.constants import DEFAULT_TIMEOUT
+from cloudify_cli.constants import DEFAULT_PARAMETERS
 
 FORMAT_INPUT_AS_YAML_OR_DICT = 'formatted as YAML or as "key1=value1;key2=value2"'
 
@@ -125,7 +126,7 @@ def workflow_id_argument(hlp):
 def parameters_argument():
     return {
         'dest': 'parameters',
-        'default': {},
+        'default': DEFAULT_PARAMETERS,
         'help': 'Parameters for the workflow execution ({0})'
         .format(FORMAT_INPUT_AS_YAML_OR_DICT)
     }
