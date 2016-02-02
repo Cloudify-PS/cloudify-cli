@@ -15,6 +15,7 @@
 
 # flake8: noqa
 
+import os
 import argparse
 
 from cloudify_cli import commands as cfy
@@ -105,15 +106,17 @@ def parser_config():
         },
         'commands': {
             'logs': {
-                'help': 'Handles Cloudify Manager logs'
+                'help': 'Handles Cloudify Manager logs',
                 'sub_commands': {
                     'get': {
                         'arguments': {
                             '-d,--destination-path': {
+                                'dest': 'destination_path',
                                 'help': 'Destination path of the downloaded archive',
                                 'default': os.getcwd(),
-                            }
+                            },
                             '-f,--format': {
+                                'dest': 'format',
                                 'help': 'The format of the downloaded archive',
                                 'choices': ['zip', 'tar.gz'],
                                 'default': 'tar.gz'
@@ -125,12 +128,14 @@ def parser_config():
                     'purge': {
                         'arguments': {
                             '-f,--force': {
+                                'dest': 'force',
                                 'help': 'Force purge. This flag is mandatory',
                                 'required': True,
                                 'action': 'store_true',
                                 'default': False
-                            }.
+                            },
                             '--backup-first': {
+                                'dest': 'backup_first',
                                 'help': 'Whether to backup before merging',
                                 'required': False,
                                 'action': 'store_true',
@@ -141,13 +146,19 @@ def parser_config():
                         'handler': cfy.logs.purge
                     },
                     'backup': {
-                        # 'arguments': {
+                        'arguments': {
+                            '-f,--format': {
+                                'dest': 'format',
+                                'help': 'The format of the downloaded archive',
+                                'choices': ['zip', 'tar.gz'],
+                                'default': 'tar.gz'
+                            },
                         #     '-p,--prefix': {
                         #         'help': 'Prefix for the backed-up archive',
                         #         'required': False,
                         #         'default': 'cloudify-manager-logs'
                         #     },
-                        # },
+                        },
                         'help': 'Backs up a Manager\'s logs',
                         'handler': cfy.logs.backup
                     },
