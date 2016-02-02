@@ -30,7 +30,6 @@ from cloudify_cli.exceptions import CloudifyCliError
 from cloudify_cli.tests import cli_runner
 from cloudify_cli.tests.commands.test_cli_command import CliCommandTest
 from cloudify_cli.tests.commands.test_cli_command import BLUEPRINTS_DIR
-from cloudify_cli import utils
 
 
 sample_blueprint_path = os.path.join(BLUEPRINTS_DIR,
@@ -62,14 +61,14 @@ class InstallTest(CliCommandTest):
 
         path_and_archive_cmd = \
             'cfy install -p {0} --archive-location={1}' \
-                .format(sample_blueprint_path,
-                        stub_archive)
+            .format(sample_blueprint_path,
+                    stub_archive)
 
         path_and_filename_and_archive_cmd = \
             'cfy install -p {0} -n {1} --archive-location={2}' \
-                .format(sample_blueprint_path,
-                        stub_filename,
-                        stub_archive)
+            .format(sample_blueprint_path,
+                    stub_filename,
+                    stub_archive)
 
         self.assertRaises(CloudifyCliError,
                           cli_runner.run_cli,
@@ -126,7 +125,6 @@ class InstallTest(CliCommandTest):
         self.assertTrue(deployments_create_mock)
         self.assertTrue(executions_start_mock)
         self.assertFalse(blueprints_upload_mock.called)
-
 
     @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
@@ -188,24 +186,27 @@ class InstallTest(CliCommandTest):
                 args=[stub_archive, stub_filename, archive_name]
         )
 
-
-    # TODO address the fact that `blueprints upload` expects an open file
-    # TODO maybe create a tmp file in the cwd named 'blueprint.yaml'?
     @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
     @patch('cloudify_cli.commands.blueprints.upload')
-    def test_blueprint_id_default_upload_mode(self, *args):
+    def test_blueprint_id_default_upload_mode(self, blueprints_upload_mock,
+                                              *args):
 
-        upload_command = 'cfy install -p {0}'.format(sample_blueprint_path)
+        install_upload_mode_command = 'cfy install -p {0}'.format(sample_blueprint_path)
 
         directory_name = 'helloworld'
 
-        self.assert_method_called(
-                cli_command=upload_command,
-                module=commands.blueprints,
-                function_name='upload',
-                args=[sample_blueprint_path, directory_name]
-         )
+        cli_runner.run_cli(install_upload_mode_command)
+
+        blueprint_id_argument_from_upload = \
+            blueprints_upload_mock.call_args_list[0][0][1]
+
+        # check that the blueprint id value that was assigned in `install`
+        # is indeed the default blueprint id (that is, the name of the dir
+        # that contains the blueprint file)
+        self.assertEqual(blueprint_id_argument_from_upload,
+                         directory_name
+                         )
 
     @patch('cloudify_cli.commands.blueprints.publish_archive')
     @patch('cloudify_cli.commands.executions.start')
@@ -261,26 +262,57 @@ class InstallTest(CliCommandTest):
                       ]
         )
 
-    def test_default_full_flow_upload_mode(self, *args):
+    @patch('cloudify_cli.commands.install')
+    def test_default_full_flow_upload_mode(self, install_mock):
 
-        command = 'cfy install'
+        install_command = 'cfy install'
 
-        self.assert_method_called(
-                cli_command=command,
-                # TODO why does the `module` argument gets assigned to the `install`
-                # TODO method inside the `install` module, and not to the `install`
-                # TODO module itself
-                module=commands.install,
-                function_name='install',
-                args=[DEFAULT_BLUEPRINT_PATH, None, None, None,
-                      None, DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND,
-                      'install', {}, False, DEFAULT_TIMEOUT, False
-                      ]
-        )
+        cli_runner.run_cli(install_command)
 
+        print install_mock.call_args_list[0][1]
 
+        install_command_arguments = \
+            install_mock.call_args_list[0][1]
 
-        # test full 'regular' flow in 'light' mode (seperate?)
+        expected_install_command_arguments = \
+            {'blueprint_path': None,
+             'blueprint_id': None,
+             'archive_location': None,
+             'blueprint_filename': None,
+             'deployment_id': None,
+             'inputs': DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND,
+             'workflow_id': 'install',
+             'parameters': {},
+             'allow_custom_parameters': False,
+             'timeout': DEFAULT_TIMEOUT,
+             'include_logs': False
+             }
 
-        # test full 'regular' flow in 'full' mode (seperate?)
+        self.assertEqual(install_command_arguments,
+                         expected_install_command_arguments)
 
+    @patch('cloudify_cli.commands.install')
+    def test_default_values_full_flow(self, install_mock):
+
+        install_command = 'cfy install'
+
+        cli_runner.run_cli(install_command)
+
+        install_command_arguments = install_mock.call_args_list[0][1]
+
+        expected_install_command_arguments = \
+            {'blueprint_path': None,
+             'blueprint_id': None,
+             'archive_location': None,
+             'blueprint_filename': None,
+             'deployment_id': None,
+             'inputs': DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND,
+             'workflow_id': 'install',
+             'parameters': {},
+             'allow_custom_parameters': False,
+             'timeout': DEFAULT_TIMEOUT,
+             'include_logs': False
+             }
+
+        self.assertEqual(install_command_arguments,
+                         expected_install_command_arguments)
