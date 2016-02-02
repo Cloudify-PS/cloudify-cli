@@ -39,6 +39,9 @@ def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
     executions.start(workflow_id, deployment_id, timeout, force,
                      allow_custom_parameters, include_logs, parameters)
 
+    # Because we want to delete the deployment right after executing the
+    # uninstall workflow, we may need to wait for the deployment executions to
+    # end.
     wait_for_stop_dep_env_execution_to_end(deployment_id)
 
     # TODO decide if --ignore-live-nodes from `cfy deployments delete` should be an argument of cfy uninstall.
