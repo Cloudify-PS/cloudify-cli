@@ -291,7 +291,7 @@ class LocalTest(CliCommandTest):
 
     @patch('cloudify_cli.commands.local.execute')
     @patch('cloudify_cli.commands.local.init')
-    def test_install_command_default_init_values(self, local_init_mock, *args):
+    def test_install_command_default_init_arguments(self, local_init_mock, *args):
 
         local_install_command = 'cfy local install'
         cli_runner.run_cli(local_install_command)
@@ -303,7 +303,7 @@ class LocalTest(CliCommandTest):
 
     @patch('cloudify_cli.commands.local.execute')
     @patch('cloudify_cli.commands.local.init')
-    def test_install_command_custom_init_values(self, local_init_mock, *args):
+    def test_install_command_custom_init_arguments(self, local_init_mock, *args):
 
         local_install_command = \
             'cfy local install -p blueprint_path.yaml -i key=value ' \
@@ -317,8 +317,11 @@ class LocalTest(CliCommandTest):
                                            )
 
 
+    def test_install_commnad_default_execute_arguments(self):
+        pass
+
     # TODO test install command default execute values
-    
+
     # TODO test install command custom execute values
 
     @nose.tools.nottest
