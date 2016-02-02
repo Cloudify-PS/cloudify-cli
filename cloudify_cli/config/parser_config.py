@@ -273,8 +273,7 @@ def parser_config():
             'uninstall': {
                 'help': '',  # TODO add help text
                 'arguments': {
-                    '-b,--blueprint-id':
-                        make_optional(blueprint_id_argument()),
+                    '-b,--blueprint-id': blueprint_id_argument(),
                     '-d,--deployment-id': deployment_id_argument(
                             hlp='The id of the deployed blueprint'),
                     '-w,--workflow': set_default(
