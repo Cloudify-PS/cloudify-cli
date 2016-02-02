@@ -316,6 +316,11 @@ class LocalTest(CliCommandTest):
                                            True
                                            )
 
+
+    # TODO test install command default execute values
+    
+    # TODO test install command custom execute values
+
     @nose.tools.nottest
     def test_local_outputs(self):
         # tested extensively by the other tests
