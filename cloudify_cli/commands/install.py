@@ -90,7 +90,10 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
     # If no inputs were supplied, and there is a file named inputs.yaml in
     # the cwd, use it as the inputs file
     if inputs is None:
-        if os.path.isfile(DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND):
+        if os.path.isfile(
+                os.path.join(utils.get_cwd(),
+                             DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)):
+
             inputs = DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 
     deployments.create(blueprint_id, deployment_id, inputs)
