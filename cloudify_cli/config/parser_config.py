@@ -152,16 +152,11 @@ def parser_config():
                                 'help': 'The format of the downloaded archive',
                                 'choices': ['zip', 'tar.gz'],
                                 'default': 'tar.gz'
-                            },
-                        #     '-p,--prefix': {
-                        #         'help': 'Prefix for the backed-up archive',
-                        #         'required': False,
-                        #         'default': 'cloudify-manager-logs'
-                        #     },
+                            }
                         },
                         'help': 'Backs up a Manager\'s logs',
                         'handler': cfy.logs.backup
-                    },
+                    }
                 }
             },
             'plugins': {

@@ -26,6 +26,8 @@ from cloudify_cli.cli import get_global_verbosity
 from cloudify_cli.logger import get_logger
 from cloudify_cli.exceptions import CloudifyCliError
 
+CLOUDIFY_LOGS_PATH = '/var/log/cloudify'
+
 
 def _build_host_string():
     return '{0}@{1}'.format(
@@ -38,8 +40,9 @@ def _run(command):
         with fab.settings(host_string=_build_host_string()):
                 result = fab.sudo(command)
                 if result.failed:
-                    raise CloudifyCliError('Failed to execute: {0}'.format(
-                        result.read_command))
+                    raise CloudifyCliError(
+                        'Failed to execute: {0} ({1})'.format(
+                            result.read_command, result.stderr))
                 return result
 
     if get_global_verbosity():
@@ -52,18 +55,18 @@ def _run(command):
 def _archive_logs(format='tar.gz'):
     logger = get_logger()
     with fab.hide('running', 'stdout'):
-        result = _run('date +%Y%m%dT%H%M%S')
-    date_arg = result.stdout
+        date = _run('date +%Y%m%dT%H%M%S').stdout
     mgmt_ip = utils.get_management_server_ip()
-    archive_filename \
-        = 'cloudify-manager-logs_' + date_arg + '_' + mgmt_ip + '.' + format
+    # TODO: maybe allow the user to set the prefix?
+    archive_filename = 'cloudify-manager-logs_{0}_{1}.{2}'.format(
+        date, mgmt_ip, format)
     archive_path = os.path.join('/tmp', archive_filename)
 
     logger.info('Creating logs archive in Manager: {0}'.format(archive_path))
     if format == 'zip':
         raise NotImplementedError()
     elif format == 'tar.gz':
-        _run('tar -czf {0} /var/log/cloudify'.format(archive_path))
+        _run('tar -czf {0} {1}'.format(archive_path, CLOUDIFY_LOGS_PATH))
     return archive_path
 
 
@@ -75,6 +78,7 @@ def get(destination_path, format='tar.gz'):
         logger.info('Downloading archive to: {0}'.format(destination_path))
         with fab.hide('running', 'stdout'):
             fab.get(archive_path, destination_path)
+    logger.info('Removing archive from Manager...')
     _run('rm {0}'.format(archive_path))
 
 
@@ -88,7 +92,7 @@ def purge(force=False, backup_first=False):
         raise CloudifyCliError(msg)
 
     logger.info('Purging Manager Logs...')
-    _run('rm -rf /var/log/cloudify/**/*')
+    _run('rm -f {0}/**/*'.format(CLOUDIFY_LOGS_PATH))
 
 
 def backup(format='tar.gz'):
