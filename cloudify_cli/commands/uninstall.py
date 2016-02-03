@@ -55,8 +55,6 @@ def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
 # from: `cloudify-system-tests.cosmo_tester.framework.testenv`),
 # enables to call `cfy deployments delete`
 # immediately after calling `cfy executions start [-w uninstall]`
-
-
 TERMINATED = 'terminated'
 FAILED = 'failed'
 CANCELLED = 'cancelled'
