@@ -362,6 +362,44 @@ class LocalTest(CliCommandTest):
                                               87
                                               )
 
+    @patch('cloudify_cli.commands.local.execute')
+    def test_uninstall_command_execute_default_arguments(self,
+                                                         local_execute_mock
+                                                         ):
+        local_uninstall_command = 'cfy local uninstall'
+
+        cli_runner.run_cli(local_uninstall_command)
+
+        local_execute_mock.assert_called_with('uninstall',
+                                              {},
+                                              False,
+                                              0,
+                                              1,
+                                              1)
+
+    @patch('cloudify_cli.commands.local.execute')
+    def test_uninstall_command_execute_custom_arguments(self,
+                                                        local_execute_mock
+                                                        ):
+        local_uninstall_command = 'cfy local uninstall ' \
+                                  '-w my-uninstall ' \
+                                  '--parameters key=value ' \
+                                  '--allow-custom-parameters ' \
+                                  '--task-retries 14 ' \
+                                  '--task-retry-interval 7 ' \
+                                  '--task-thread-pool-size 87'
+
+        cli_runner.run_cli(local_uninstall_command)
+
+        local_execute_mock.assert_called_with('my-uninstall',
+                                              'key=value',
+                                              True,
+                                              14,
+                                              7,
+                                              87)
+
+
+
     @nose.tools.nottest
     def test_local_outputs(self):
         # tested extensively by the other tests
