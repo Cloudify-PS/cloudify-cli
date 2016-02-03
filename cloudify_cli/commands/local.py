@@ -59,8 +59,8 @@ def uninstall(workflow_id, parameters, allow_custom_parameters, task_retries,
     # Remove the local-storage dir
     utils.remove_if_exists(_storage_dir())
 
-    # Note that although `local install` possibly creates a `.cloudify` dir
-    # in addition to the creation of the local storage dir, `local uninstall`
+    # Note that although `local install` possibly creates a `.cloudify` dir in
+    # addition to the creation of the local storage dir, `local uninstall`
     # does not remove the .cloudify dir.
 
 
