@@ -291,6 +291,9 @@ class LocalTest(CliCommandTest):
             .format(BLUEPRINTS_DIR)
         cli_runner.run_cli('cfy local init -p {0}'.format(blueprint_path))
 
+    # TODO add test to check if the inputs gets assigned with `inputs.yaml` in
+    # TODO case such a file exists
+
     @patch('cloudify_cli.commands.local.execute')
     @patch('cloudify_cli.commands.local.init')
     def test_install_command_default_init_arguments(self,

@@ -49,6 +49,9 @@ stub_parameters = {}
 
 class InstallTest(CliCommandTest):
 
+    # TODO add test to check if the inputs gets assigned with `inputs.yaml` in
+    # TODO case such a file exists
+
     @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
     @patch('cloudify_cli.commands.blueprints.publish_archive')
