@@ -404,21 +404,26 @@ class LocalTest(CliCommandTest):
     def test_uninstall_command_removes_local_storage_dir(self):
 
         sample_blueprint_path = os.path.join(BLUEPRINTS_DIR,
-                                             'helloworld',
+                                             'local',
                                              'blueprint.yaml')
 
+        # a custom workflow is used because the sample blueprint path does not
+        # have an 'install' workflow
         cli_runner.run_cli('cfy local install '
-                           '-p {0} '
-                           '--inputs key=value'
+                           '-w run_test_op_on_nodes '
+                           '-p {0}'
                            .format(sample_blueprint_path)
                            )
         self.assertTrue(os.path.isdir(local._storage_dir()))
 
-        # check that a local storage dir was created
+        # a custom workflow is used because the sample blueprint path does not
+        # have an 'uninstall' workflow
+        cli_runner.run_cli('cfy local uninstall '
+                           '-w run_test_op_on_nodes '
+                           .format(sample_blueprint_path)
+                           )
 
-        # run cfy uninstall
-
-        # check if local storage dir was removed
+        self.assertFalse(os.path.isdir(local._storage_dir()))
 
     @nose.tools.nottest
     def test_local_outputs(self):
