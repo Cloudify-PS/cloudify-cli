@@ -32,8 +32,8 @@ class UninstallTest(CliCommandTest):
     @patch('cloudify_cli.utils.get_rest_client')
     @patch('cloudify_cli.commands.executions.start')
     def test_default_executions_start_arguments(self,
-                                               executions_start_mock, *args
-                                               ):
+                                                executions_start_mock, *args
+                                                ):
         uninstall_command = 'cfy uninstall -b bid -d did'
         cli_runner.run_cli(uninstall_command)
 
@@ -51,8 +51,8 @@ class UninstallTest(CliCommandTest):
     @patch('cloudify_cli.utils.get_rest_client')
     @patch('cloudify_cli.commands.executions.start')
     def test_custom_executions_start_arguments(self,
-                                              executions_start_mock, *args
-                                              ):
+                                               executions_start_mock, *args
+                                               ):
         uninstall_command = 'cfy uninstall -b bid ' \
                             '-w my_uninstall ' \
                             '-d did ' \
@@ -96,5 +96,3 @@ class UninstallTest(CliCommandTest):
         cli_runner.run_cli(uninstall_command)
 
         blueprints_delete_mock.assert_called_with('bid')
-
-
