@@ -22,6 +22,8 @@ import os
 from mock import patch
 
 from cloudify_cli import commands
+from cloudify_cli import utils
+
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
 from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
@@ -48,9 +50,6 @@ stub_parameters = {}
 
 
 class InstallTest(CliCommandTest):
-
-    # TODO add test to check if the inputs gets assigned with `inputs.yaml` in
-    # TODO case such a file exists
 
     @patch('cloudify_cli.commands.executions.start')
     @patch('cloudify_cli.commands.deployments.create')
@@ -234,9 +233,9 @@ class InstallTest(CliCommandTest):
         command = \
             'cfy install -n {0} --archive-location={1} ' \
             '--inputs={2} -b {3} -d {4}' \
-                .format(stub_filename, stub_archive,
-                        stub_inputs, stub_blueprint_id,
-                        stub_deployment_id)
+            .format(stub_filename, stub_archive,
+                    stub_inputs, stub_blueprint_id,
+                    stub_deployment_id)
 
         self.assert_method_called(
                 cli_command=command,
@@ -244,6 +243,30 @@ class InstallTest(CliCommandTest):
                 function_name='create',
                 args=[stub_blueprint_id, stub_deployment_id, stub_inputs]
         )
+
+    @patch('cloudify_cli.commands.blueprints.publish_archive')
+    @patch('cloudify_cli.commands.executions.start')
+    def test_default_inputs_file_path(self, *args):
+
+        # create an `inputs.yaml` file in the cwd.
+        inputs_path = os.path.join(utils.get_cwd(), 'inputs.yaml')
+        os.mknod(inputs_path)
+
+        command = \
+            'cfy install -n {0} --archive-location={1} ' \
+            '-b {2} -d {3}' \
+            .format(stub_filename, stub_archive,
+                    stub_blueprint_id, stub_deployment_id)
+
+        self.assert_method_called(
+                cli_command=command,
+                module=commands.deployments,
+                function_name='create',
+                args=[stub_blueprint_id,
+                      stub_deployment_id,
+                      DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND]
+        )
+
 
     @patch('cloudify_cli.commands.blueprints.publish_archive')
     @patch('cloudify_cli.commands.deployments.create')
@@ -271,8 +294,6 @@ class InstallTest(CliCommandTest):
         install_command = 'cfy install'
 
         cli_runner.run_cli(install_command)
-
-        print install_mock.call_args_list[0][1]
 
         install_command_arguments = \
             install_mock.call_args_list[0][1]

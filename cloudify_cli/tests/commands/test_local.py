@@ -291,9 +291,6 @@ class LocalTest(CliCommandTest):
             .format(BLUEPRINTS_DIR)
         cli_runner.run_cli('cfy local init -p {0}'.format(blueprint_path))
 
-    # TODO add test to check if the inputs gets assigned with `inputs.yaml` in
-    # TODO case such a file exists
-
     @patch('cloudify_cli.commands.local.execute')
     @patch('cloudify_cli.commands.local.init')
     def test_install_command_default_init_arguments(self,
@@ -307,6 +304,24 @@ class LocalTest(CliCommandTest):
                                            None,
                                            False
                                            )
+
+    @patch('cloudify_cli.commands.local.execute')
+    @patch('cloudify_cli.commands.local.init')
+    def test_install_command_default_inputs_file(self,
+                                                 local_init_mock,
+                                                 *args):
+        # create an `inputs.yaml` file in the cwd.
+        inputs_path = os.path.join(utils.get_cwd(), 'inputs.yaml')
+        os.mknod(inputs_path)
+
+        local_install_command = 'cfy local install -p path'
+        cli_runner.run_cli(local_install_command)
+
+        local_init_mock.assert_called_with(
+            'path',
+            DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND,
+            False
+            )
 
     @patch('cloudify_cli.commands.local.execute')
     @patch('cloudify_cli.commands.local.init')
