@@ -25,6 +25,7 @@ from cloudify_cli.commands import deployments
 from cloudify_cli.commands import executions
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
+from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 from cloudify_cli.exceptions import CloudifyCliError
 
 
@@ -85,6 +86,12 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
     # If deployment-id wasn't supplied, use the same name as the blueprint id.
     if deployment_id is None:
         deployment_id = blueprint_id
+
+    # If no inputs were supplied, and there is a file named inputs.yaml in
+    # the cwd, use it as the inputs file
+    if inputs is None:
+        if os.path.isfile(DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND):
+            inputs = DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 
     deployments.create(blueprint_id, deployment_id, inputs)
 

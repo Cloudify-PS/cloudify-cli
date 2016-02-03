@@ -27,7 +27,7 @@ from cloudify_cli.config.argument_utils import set_default
 from cloudify_cli.constants import DEFAULT_REST_PORT
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
-from cloudify_cli.constants import DEFAULT_INPUTS_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 from cloudify_cli.constants import DEFAULT_TIMEOUT
 from cloudify_cli.constants import DEFAULT_PARAMETERS
 from cloudify_cli.constants import DEFAULT_TASK_THREAD_POOL_SIZE
@@ -101,8 +101,8 @@ def install_command_inputs_argument():
             inputs_argument('Inputs file/string for the deployment '
                             'creation ({0}). Default: {1}'
                             .format(FORMAT_INPUT_AS_YAML_OR_DICT,
-                                    DEFAULT_INPUTS_FOR_INSTALL_COMMAND)),
-            DEFAULT_INPUTS_FOR_INSTALL_COMMAND)
+                                    DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)),
+            DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)
 
 
 def execution_id_argument(hlp):
@@ -240,11 +240,11 @@ def parser_config():
                         make_optional(
                                 remove_type(
                                         manager_blueprint_path_argument())
-                    ),
+                        ),
                     '-b,--blueprint-id': remove_completer(
                             make_optional(blueprint_id_argument(
                             ))
-                    ),
+                        ),
                     '--archive-location': make_optional(
                             archive_location_argument()),
                     '-n,--blueprint-filename': {
@@ -252,11 +252,16 @@ def parser_config():
                         'help': "The name of the archive's main "
                                 "blueprint file. Default: `{0}`"
                                 .format(DEFAULT_BLUEPRINT_FILE_NAME)
-                    },
+                        },
                     '-d,--deployment-id': deployment_id_argument(
                             hlp='The id of the deployed blueprint'
-                    ),
-                    '-i,--inputs': install_command_inputs_argument(),
+                        ),
+                    '-i,--inputs':
+                        inputs_argument('Inputs file/string for the deployment'
+                                        ' creation ({0}). Default: {1}'
+                                        .format(FORMAT_INPUT_AS_YAML_OR_DICT,
+                                                DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)
+                                        ),
                     '-w,--workflow': set_default(
                             make_optional(workflow_id_argument(
                                     hlp='The workflow to start (default: '
@@ -766,7 +771,13 @@ def parser_config():
                                                     "`{0}`".format(DEFAULT_BLUEPRINT_PATH)
                                         )
                                 ),
-                            '-i,--inputs': install_command_inputs_argument(),
+                            '-i,--inputs':
+                                inputs_argument('Inputs file/string for the '
+                                                'deployment creation ({0}). '
+                                                'Default: {1}'
+                                                .format(FORMAT_INPUT_AS_YAML_OR_DICT,
+                                                        DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND)
+                                                ),
                             '--install-plugins': install_plugins_argument(),
                             '-w,--workflow': set_default(
                                     make_optional(

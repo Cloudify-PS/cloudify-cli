@@ -35,14 +35,14 @@ from dsl_parser.constants import HOST_TYPE
 
 from cloudify_cli import utils
 from cloudify_cli import common
-
+from cloudify_cli.commands import local
 from cloudify_cli.tests import cli_runner
 from cloudify_cli.tests.commands.test_cli_command import CliCommandTest
 from cloudify_cli.tests.commands.test_cli_command import \
     (BLUEPRINTS_DIR,
      TEST_WORK_DIR)
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
-from cloudify_cli.constants import DEFAULT_INPUTS_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 from cloudify_cli.constants import DEFAULT_PARAMETERS
 from cloudify_cli.constants import DEFAULT_TASK_THREAD_POOL_SIZE
 
@@ -301,7 +301,7 @@ class LocalTest(CliCommandTest):
         cli_runner.run_cli(local_install_command)
 
         local_init_mock.assert_called_with(DEFAULT_BLUEPRINT_PATH,
-                                           DEFAULT_INPUTS_FOR_INSTALL_COMMAND,
+                                           None,
                                            False
                                            )
 
@@ -398,7 +398,24 @@ class LocalTest(CliCommandTest):
                                               7,
                                               87)
 
+    def test_uninstall_command_removes_local_storage_dir(self):
 
+        sample_blueprint_path = os.path.join(BLUEPRINTS_DIR,
+                                             'helloworld',
+                                             'blueprint.yaml')
+
+        cli_runner.run_cli('cfy local install '
+                           '-p {0} '
+                           '--inputs key=value'
+                           .format(sample_blueprint_path)
+                           )
+        self.assertTrue(os.path.isdir(local._storage_dir()))
+
+        # check that a local storage dir was created
+
+        # run cfy uninstall
+
+        # check if local storage dir was removed
 
     @nose.tools.nottest
     def test_local_outputs(self):

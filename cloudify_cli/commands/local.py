@@ -29,6 +29,7 @@ from cloudify_cli import utils
 from cloudify_cli.logger import get_logger
 from cloudify_cli.commands import init as cfy_init
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
+from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 
 
 _NAME = 'local'
@@ -43,6 +44,12 @@ def install(blueprint_path, inputs, install_plugins, workflow_id, parameters,
     # if no blueprint path was supplied, set it to a default value
     if blueprint_path is None:
         blueprint_path = DEFAULT_BLUEPRINT_PATH
+
+    # If no inputs were supplied, and there is a file named inputs.yaml in
+    # the cwd, use it as the inputs file
+    if inputs is None:
+        if os.path.isfile(DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND):
+            inputs = DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 
     init(blueprint_path, inputs, install_plugins)
 

@@ -24,7 +24,7 @@ from mock import patch
 from cloudify_cli import commands
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
 from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
-from cloudify_cli.constants import DEFAULT_INPUTS_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
 from cloudify_cli.constants import DEFAULT_TIMEOUT
 from cloudify_cli.exceptions import CloudifyCliError
 from cloudify_cli.tests import cli_runner
@@ -280,7 +280,7 @@ class InstallTest(CliCommandTest):
              'archive_location': None,
              'blueprint_filename': None,
              'deployment_id': None,
-             'inputs': DEFAULT_INPUTS_FOR_INSTALL_COMMAND,
+             'inputs': None,
              'workflow_id': 'install',
              'parameters': {},
              'allow_custom_parameters': False,
@@ -306,7 +306,7 @@ class InstallTest(CliCommandTest):
              'archive_location': None,
              'blueprint_filename': None,
              'deployment_id': None,
-             'inputs': DEFAULT_INPUTS_FOR_INSTALL_COMMAND,
+             'inputs': None,
              'workflow_id': 'install',
              'parameters': {},
              'allow_custom_parameters': False,
