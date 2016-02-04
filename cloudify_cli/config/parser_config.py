@@ -136,7 +136,8 @@ def parser_config():
                             },
                             '--backup-first': {
                                 'dest': 'backup_first',
-                                'help': 'Whether to backup before merging',
+                                'help': 'Whether to backup before purging.
+                                        'Backup will be in tar.gz format.',
                                 'required': False,
                                 'action': 'store_true',
                                 'default': False

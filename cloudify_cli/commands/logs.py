@@ -38,12 +38,12 @@ def _build_host_string():
 def _run(command):
     def execute():
         with fab.settings(host_string=_build_host_string()):
-                result = fab.sudo(command)
-                if result.failed:
-                    raise CloudifyCliError(
-                        'Failed to execute: {0} ({1})'.format(
-                            result.read_command, result.stderr))
-                return result
+            result = fab.sudo(command)
+            if result.failed:
+                raise CloudifyCliError(
+                    'Failed to execute: {0} ({1})'.format(
+                        result.read_command, result.stderr))
+            return result
 
     if get_global_verbosity():
         return execute()
@@ -56,17 +56,21 @@ def _archive_logs(format='tar.gz'):
     logger = get_logger()
     with fab.hide('running', 'stdout'):
         date = _run('date +%Y%m%dT%H%M%S').stdout
-    mgmt_ip = utils.get_management_server_ip()
     # TODO: maybe allow the user to set the prefix?
     archive_filename = 'cloudify-manager-logs_{0}_{1}.{2}'.format(
-        date, mgmt_ip, format)
+        date, utils.get_management_server_ip(), format)
     archive_path = os.path.join('/tmp', archive_filename)
 
+    _run('journalctl | tee {0}/journalctl_log'.format(CLOUDIFY_LOGS_PATH))
     logger.info('Creating logs archive in Manager: {0}'.format(archive_path))
+    # We skip checking if the zip/tar executables can be found on the machine
+    # knowingly. We don't want to run another ssh command just to verify
+    # something that will almost never happen.
     if format == 'zip':
-        raise NotImplementedError()
+        cmd = 'zip {0} {1}'
     elif format == 'tar.gz':
-        _run('tar -czf {0} {1}'.format(archive_path, CLOUDIFY_LOGS_PATH))
+        cmd = 'tar -czf {0} {1}'
+    _run(cmd.format(archive_path, CLOUDIFY_LOGS_PATH))
     return archive_path
 
 
