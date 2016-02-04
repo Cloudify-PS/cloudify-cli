@@ -52,13 +52,17 @@ def _run(command):
             return execute()
 
 
+def _get_manager_date():
+    # output here should be hidden anyway.
+    with fab.hide('running', 'stdout'):
+        return _run('date +%Y%m%dT%H%M%S').stdout
+
+
 def _archive_logs(format='tar.gz'):
     logger = get_logger()
-    with fab.hide('running', 'stdout'):
-        date = _run('date +%Y%m%dT%H%M%S').stdout
     # TODO: maybe allow the user to set the prefix?
     archive_filename = 'cloudify-manager-logs_{0}_{1}.{2}'.format(
-        date, utils.get_management_server_ip(), format)
+        _get_manager_date(), utils.get_management_server_ip(), format)
     archive_path = os.path.join('/tmp', archive_filename)
 
     _run('journalctl | tee {0}/journalctl_log'.format(CLOUDIFY_LOGS_PATH))
@@ -77,13 +81,13 @@ def _archive_logs(format='tar.gz'):
 def get(destination_path, format='tar.gz'):
     logger = get_logger()
     fab.env.key_filename = os.path.expanduser(utils.get_management_key())
-    archive_path = _archive_logs(format=format)
+    archive_path_on_manager = _archive_logs(format=format)
     with fab.settings(host_string=_build_host_string()):
         logger.info('Downloading archive to: {0}'.format(destination_path))
         with fab.hide('running', 'stdout'):
-            fab.get(archive_path, destination_path)
+            fab.get(archive_path_on_manager, destination_path)
     logger.info('Removing archive from Manager...')
-    _run('rm {0}'.format(archive_path))
+    _run('rm {0}'.format(archive_path_on_manager))
 
 
 def purge(force=False, backup_first=False):
@@ -102,7 +106,8 @@ def purge(force=False, backup_first=False):
 def backup(format='tar.gz'):
     logger = get_logger()
     fab.env.key_filename = os.path.expanduser(utils.get_management_key())
-    archive_path = _archive_logs(format=format)
-    filename = os.path.basename(archive_path)
-    logger.info('Backing up Manager logs to /var/log/{0}'.format(filename))
-    _run('mv {0} {1}'.format(archive_path, '/var/log/'))
+    archive_path_on_manager = _archive_logs(format=format)
+    archive_filename = os.path.basename(archive_path_on_manager)
+    logger.info('Backing up Manager logs to /var/log/{0}'.format(
+        archive_filename))
+    _run('mv {0} {1}'.format(archive_path_on_manager, '/var/log/'))
