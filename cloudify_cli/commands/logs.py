@@ -76,7 +76,7 @@ def _archive_logs():
     archive_path = os.path.join('/tmp', archive_filename)
 
     _run('journalctl > /tmp/jctl && '
-         'mv /tmp/jctl /var/log/cloudify/journalctl_log')
+         'mv /tmp/jctl /var/log/cloudify/journalctl.log')
     logger.info('Creating logs archive in Manager: {0}'.format(archive_path))
     # We skip checking if the tar executable can be found on the machine
     # knowingly. We don't want to run another ssh command just to verify
