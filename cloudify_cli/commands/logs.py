@@ -106,8 +106,9 @@ def purge(force=False, backup_first=False):
     # well, we could've just `find /var/log/cloudify -name "*" -type f -delete`
     # thing is, it will delete all files and nothing will be written into them
     # until the relevant service is restarted.
+    # echo "" | sudo tee $f >/dev/null is an alternative for cleanup.
     _run('for f in $(sudo find /var/log/cloudify -name "*" -type f); '
-         'do echo "" | sudo tee $f >/dev/null; done')
+         'do sudo truncate -s 0 $f; done')
 
 
 def backup():
