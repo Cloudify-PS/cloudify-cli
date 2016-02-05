@@ -114,13 +114,7 @@ def parser_config():
                                 'dest': 'destination_path',
                                 'help': 'Destination path of the downloaded archive',
                                 'default': os.getcwd(),
-                            },
-                            '-f,--format': {
-                                'dest': 'format',
-                                'help': 'The format of the downloaded archive',
-                                'choices': ['zip', 'tar.gz'],
-                                'default': 'tar.gz'
-                            },
+                            }
                         },
                         'help': "Retrieves an archive containing a Manager\'s logs",
                         'handler': cfy.logs.get
@@ -147,14 +141,6 @@ def parser_config():
                         'handler': cfy.logs.purge
                     },
                     'backup': {
-                        'arguments': {
-                            '-f,--format': {
-                                'dest': 'format',
-                                'help': 'The format of the downloaded archive',
-                                'choices': ['zip', 'tar.gz'],
-                                'default': 'tar.gz'
-                            }
-                        },
                         'help': 'Backs up a Manager\'s logs',
                         'handler': cfy.logs.backup
                     }
