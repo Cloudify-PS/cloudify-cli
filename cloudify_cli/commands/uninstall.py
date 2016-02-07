@@ -44,9 +44,7 @@ def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
     # end.
     wait_for_stop_dep_env_execution_to_end(deployment_id)
 
-    ignore_live_nodes = True
-
-    deployments.delete(deployment_id, ignore_live_nodes)
+    deployments.delete(deployment_id, ignore_live_nodes=False)
 
     blueprints.delete(blueprint_id)
 
