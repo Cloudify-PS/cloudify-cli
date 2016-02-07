@@ -18,6 +18,7 @@ Handles 'cfy install'
 """
 
 import os
+import urlparse
 
 from cloudify_cli import utils
 from cloudify_cli.commands import blueprints
@@ -50,11 +51,27 @@ def install(blueprint_path, blueprint_id, archive_location, blueprint_filename,
         # If blueprint-id wasn't supplied, assign it to the name of the archive
         if blueprint_id is None:
 
-            filename, ext = os.path.splitext(
-                    os.path.basename(archive_location))
-            blueprint_id = filename
+            blueprints.check_if_archive_type_is_supported(archive_location)
 
-            # TODO implement url handling. just use the logic of `blueprints.publish_archive`
+            (archive_location, archive_location_type) = \
+                blueprints.determine_archive_type(archive_location)
+
+            # if the archive is a local path, assign blueprint-id the name of
+            # the archive file without the extension
+            if archive_location_type == 'path':
+                filename, ext = os.path.splitext(
+                        os.path.basename(archive_location))
+                blueprint_id = filename
+
+            # if the archive is a url, assign blueprint-id name of the file
+            # that the url leads to, without the extension.
+            # e.g. http://example.com/path/archive.zip?para=val#sect -> archive
+            if archive_location_type == 'url':
+
+                path = urlparse.urlparse(archive_location).path
+                archive_file = path.split('/')[-1]
+                archive_name = archive_file.split('.')[0]
+                blueprint_id = archive_name
 
         blueprints.publish_archive(archive_location, blueprint_filename,
                                    blueprint_id)
