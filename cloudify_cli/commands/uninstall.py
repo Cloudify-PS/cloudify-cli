@@ -44,7 +44,6 @@ def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
     # end.
     wait_for_stop_dep_env_execution_to_end(deployment_id)
 
-    # TODO decide if --ignore-live-nodes from `cfy deployments delete` should be an argument of cfy uninstall.
     ignore_live_nodes = True
 
     deployments.delete(deployment_id, ignore_live_nodes)
@@ -52,7 +51,7 @@ def uninstall(blueprint_id, deployment_id, workflow_id, parameters,
     blueprints.delete(blueprint_id)
 
 # The function below (taken, with small modifications,
-# from: `cloudify-system-tests.cosmo_tester.framework.testenv`),
+# from `cloudify-system-tests.cosmo_tester.framework.testenv`),
 # enables to call `cfy deployments delete`
 # immediately after calling `cfy executions start [-w uninstall]`
 TERMINATED = 'terminated'
