@@ -51,10 +51,10 @@ def validate(blueprint_path):
     logger.info(messages.VALIDATING_BLUEPRINT_SUCCEEDED)
 
 
-def upload(blueprint_path, blueprint_id, validate):
+def upload(blueprint_path, blueprint_id, pre_validate):
     logger = get_logger()
     management_ip = utils.get_management_server_ip()
-    if validate:
+    if pre_validate:
         validate(blueprint_path)
     else:
         logger.debug("Skipping blueprint validation")

@@ -174,7 +174,7 @@ def parser_config():
                             },
                             '-b,--blueprint-id': argument_utils.remove_completer(blueprint_id_argument()),
                             '--validate': {
-                                'dest': 'validate',
+                                'dest': 'pre_validate',
                                 'action': 'store_true',
                                 'default': False,
                                 'help': 'Validate the blueprint before uploading it '
