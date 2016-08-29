@@ -216,21 +216,19 @@ def _set_cli_except_hook():
             output_message = False
         if issubclass(tpe, CloudifyBootstrapError):
             output_message = False
-        if verbose_output:
-            # print traceback if verbose
-            s_traceback = StringIO.StringIO()
-            traceback.print_exception(
-                etype=tpe,
-                value=value,
-                tb=tb,
-                file=s_traceback)
-            logger.error(s_traceback.getvalue())
-            if server_traceback:
-                logger.error('Server Traceback (most recent call last):')
+        s_traceback = StringIO.StringIO()
+        traceback.print_exception(
+            etype=tpe,
+            value=value,
+            tb=tb,
+            file=s_traceback)
+        logger.error(s_traceback.getvalue())
+        if server_traceback:
+            logger.error('Server Traceback (most recent call last):')
 
-                # No need for print_tb since this exception
-                # is already formatted by the server
-                logger.error(server_traceback)
+            # No need for print_tb since this exception
+            # is already formatted by the server
+            logger.error(server_traceback)
         if output_message and not verbose_output:
 
             # if we output the traceback
