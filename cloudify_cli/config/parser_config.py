@@ -1091,7 +1091,7 @@ def parser_config():
                     '--teardown-on-failure': {
                         'dest': 'tear_down',
                         'action': 'store_true',
-                        'help': 'Teardown the Manager even if the bootstrap fails'
+                        'help': 'Teardown the Manager if the bootstrap fails'
                     },
                     '--skip-validations': {
                         'dest': 'skip_validations',
