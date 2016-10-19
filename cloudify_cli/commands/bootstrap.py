@@ -25,7 +25,7 @@ from cloudify_cli.logger import get_logger
 from cloudify_cli.bootstrap import bootstrap as bs
 
 
-def bootstrap(keep_up,
+def bootstrap(tear_down,
               validate_only,
               skip_validations,
               blueprint_path,
@@ -96,7 +96,7 @@ def bootstrap(keep_up,
         except Exception as ex:
             tpe, value, traceback = sys.exc_info()
             logger.error('Bootstrap failed! ({0})'.format(str(ex)))
-            if not keep_up:
+            if tear_down:
                 try:
                     bs.load_env(env_name)
                 except IOError:

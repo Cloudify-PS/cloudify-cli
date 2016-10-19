@@ -1088,10 +1088,10 @@ def parser_config():
                             'This argument can be used multiple times.'
                             .format(FORMAT_INPUT_AS_YAML_OR_DICT)
                     ),
-                    '--keep-up-on-failure': {
-                        'dest': 'keep_up',
+                    '--teardown-on-failure': {
+                        'dest': 'tear_down',
                         'action': 'store_true',
-                        'help': 'Do not teardown the Manager even if the bootstrap fails'
+                        'help': 'Teardown the Manager even if the bootstrap fails'
                     },
                     '--skip-validations': {
                         'dest': 'skip_validations',
