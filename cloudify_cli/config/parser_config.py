@@ -26,14 +26,16 @@ from cloudify_cli.config.argument_utils import make_required
 from cloudify_cli.config.argument_utils import make_optional
 from cloudify_cli.config.argument_utils import remove_completer
 
-from cloudify_cli.constants import DEFAULT_TIMEOUT
-from cloudify_cli.constants import DEFAULT_REST_PORT
-from cloudify_cli.constants import DEFAULT_BLUEPRINT_PATH
-from cloudify_cli.constants import DEFAULT_INSTALL_WORKFLOW
-from cloudify_cli.constants import DEFAULT_UNINSTALL_WORKFLOW
-from cloudify_cli.constants import DEFAULT_BLUEPRINT_FILE_NAME
-from cloudify_cli.constants import DEFAULT_TASK_THREAD_POOL_SIZE
-from cloudify_cli.constants import DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND
+from cloudify_cli.constants import (DEFAULT_TIMEOUT,
+                                    DEFAULT_REST_PORT,
+                                    DEFAULT_BLUEPRINT_PATH,
+                                    DEFAULT_INSTALL_WORKFLOW,
+                                    DEFAULT_UNINSTALL_WORKFLOW,
+                                    DEFAULT_BLUEPRINT_FILE_NAME,
+                                    DEFAULT_TASK_THREAD_POOL_SIZE,
+                                    DEFAULT_INPUTS_PATH_FOR_INSTALL_COMMAND,
+                                    WORKFLOW_TASK_RETRIES,
+                                    WORKFLOW_TASK_RETRY_INTERVAL)
 
 FORMAT_INPUT_AS_YAML_OR_DICT = \
     ('Can be provided as wildcard based paths (*.yaml, etc..) to YAML files, '
@@ -916,9 +918,9 @@ def parser_config():
                             '--parameters': parameters_argument(),
                             '--allow-custom-parameters':
                                 allow_custom_parameters_argument(),
-                            '--task-retries': task_retries_argument(0),
+                            '--task-retries': task_retries_argument(WORKFLOW_TASK_RETRIES),
                             '--task-retry-interval':
-                                task_retry_interval_argument(1),
+                                task_retry_interval_argument(WORKFLOW_TASK_RETRY_INTERVAL),
                             '--task-thread-pool-size':
                                 task_thread_pool_size_argument()
                         },
@@ -936,9 +938,9 @@ def parser_config():
                             '--parameters': parameters_argument(),
                             '--allow-custom-parameters':
                                 allow_custom_parameters_argument(),
-                            '--task-retries': task_retries_argument(0),
+                            '--task-retries': task_retries_argument(WORKFLOW_TASK_RETRIES),
                             '--task-retry-interval':
-                                task_retry_interval_argument(1),
+                                task_retry_interval_argument(WORKFLOW_TASK_RETRY_INTERVAL),
                             '--task-thread-pool-size':
                                 task_thread_pool_size_argument()
                         },
@@ -997,9 +999,9 @@ def parser_config():
                             '-p,--parameters': parameters_argument(),
                             '--allow-custom-parameters':
                                 allow_custom_parameters_argument(),
-                            '--task-retries': task_retries_argument(0),
+                            '--task-retries': task_retries_argument(WORKFLOW_TASK_RETRIES),
                             '--task-retry-interval':
-                                task_retry_interval_argument(1),
+                                task_retry_interval_argument(WORKFLOW_TASK_RETRY_INTERVAL),
                             '--task-thread-pool-size':
                                 task_thread_pool_size_argument()
                         },
@@ -1106,8 +1108,8 @@ def parser_config():
                                 'actually performing the bootstrap process'
                     },
                     '--install-plugins': install_plugins_argument(),
-                    '--task-retries': task_retries_argument(5),
-                    '--task-retry-interval': task_retry_interval_argument(30),
+                    '--task-retries': task_retries_argument(WORKFLOW_TASK_RETRIES),
+                    '--task-retry-interval': task_retry_interval_argument(WORKFLOW_TASK_RETRY_INTERVAL),
                     '--task-thread-pool-size':
                         task_thread_pool_size_argument()
                 },
@@ -1136,8 +1138,8 @@ def parser_config():
                                 'actually performing the upgrade process'
                     },
                     '--install-plugins': install_plugins_argument(),
-                    '--task-retries': task_retries_argument(5),
-                    '--task-retry-interval': task_retry_interval_argument(30),
+                    '--task-retries': task_retries_argument(WORKFLOW_TASK_RETRIES),
+                    '--task-retry-interval': task_retry_interval_argument(WORKFLOW_TASK_RETRY_INTERVAL),
                     '--task-thread-pool-size':
                         task_thread_pool_size_argument()
                 },
@@ -1155,8 +1157,8 @@ def parser_config():
                         'help': 'The Required inputs for running the rollback process',
                     },
                     '--install-plugins': install_plugins_argument(),
-                    '--task-retries': task_retries_argument(5),
-                    '--task-retry-interval': task_retry_interval_argument(30)
+                    '--task-retries': task_retries_argument(WORKFLOW_TASK_RETRIES),
+                    '--task-retry-interval': task_retry_interval_argument(WORKFLOW_TASK_RETRY_INTERVAL)
                 },
                 'handler': cfy.rollback.rollback
             },
@@ -1180,8 +1182,8 @@ def parser_config():
                     '-f,--force': force_argument(
                             hlp='Force recovery. This flag is mandatory',
                     ),
-                    '--task-retries': task_retries_argument(5),
-                    '--task-retry-interval': task_retry_interval_argument(30),
+                    '--task-retries': task_retries_argument(WORKFLOW_TASK_RETRIES),
+                    '--task-retry-interval': task_retry_interval_argument(WORKFLOW_TASK_RETRY_INTERVAL),
                     '--task-thread-pool-size':
                         task_thread_pool_size_argument(),
                     '-s,--snapshot-path': {
