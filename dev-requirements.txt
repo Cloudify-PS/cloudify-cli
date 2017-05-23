@@ -1,7 +1,7 @@
 git+https://github.com/cloudify-cosmo/cloudify-rest-client@4.0.1#egg=cloudify-rest-client==4.0.1
 git+https://github.com/cloudify-cosmo/cloudify-dsl-parser@4.0.1#egg=cloudify-dsl-parser==4.0.1
-git+https://github.com/cloudify-cosmo/cloudify-plugins-common@4.0.1#egg=cloudify-plugins-common==4.0.1
-git+https://github.com/cloudify-cosmo/cloudify-script-plugin@1.4#egg=cloudify-script-plugin==1.4
+git+https://github.com/Cloudify-PS/cloudify-plugins-common@4.0.1post1#egg=cloudify-plugins-common==4.0.1post1
+git+https://github.com/Cloudify-PS/cloudify-script-plugin@1.4post1#egg=cloudify-script-plugin==1.4post1
 
 nose
 mock
